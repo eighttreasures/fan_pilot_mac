@@ -1,0 +1,7 @@
+# 安装包只走 GitHub Release asset，不进 git 仓库
+*.zip
+*.dmg
+*.pkg
+
+# 系统噪声
+.DS_Store

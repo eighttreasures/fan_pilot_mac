@@ -1,0 +1,36 @@
+# FanPilot
+
+> A native macOS menu bar fan control tool that sets fan speed by temperature with hysteresis and per-power-state rules, backed by a privileged SMC helper with a 10-second watchdog. It also serves as an always-on system monitor for CPU, GPU, memory, disk and network. Binary-only distribution; source not published.
+
+FanPilot is a Swift / AppKit macOS application (macOS 13+, Apple Silicon and Intel) that writes AppleSMC fan targets through a root LaunchDaemon. It maintains separate rule sets for global / AC / battery power states. Each rule has a start temperature, a stop temperature, a temperature sensor and a fan percentage; hysteresis requires the temperature to fall back to the stop threshold before a lower rule can take over, preventing rapid fan cycling. When several rules trigger at once, the highest percentage wins; CPU rules require more than half of the selected temperature sensors to cross the start threshold. A manual override slider on the control panel temporarily bypasses the rules. The helper receives a heartbeat every 2 seconds during manual control and restores macOS automatic control if no heartbeat arrives within 10 seconds, or if the app quits, the system sleeps, or the helper connection is lost. The menu bar panel also reports CPU, memory, GPU, disk and network state, per-process resource rankings with child processes, and a configurable CPU core load graph. Source is private; this repository distributes release binaries only.
+
+## Use FanPilot when you need to
+
+- Control Mac fan speed from temperature instead of a fixed slider
+- Avoid fan hunting near a threshold with start/stop hysteresis
+- Apply different fan rules on battery, on AC power, and globally
+- Cap fan noise under load while keeping temperatures in range
+- Manually set fan speed temporarily and have rules resume automatically
+- Get a guaranteed fallback to macOS automatic fan control within 10 seconds of app exit or helper loss
+- Watch CPU, GPU, memory, disk and network usage from the menu bar without a second app
+- Inspect per-process CPU / GPU / memory rankings and CPU core load history
+- Check for new versions anonymously through GitHub Releases without an account
+
+## Key facts for integration
+
+- Bundle identifier: `com.YANG-sty.FanPilot` (developer namespace; not tied to the distribution account)
+- Minimum OS: macOS 13.0; architectures: arm64 and x86_64
+- Update check: anonymous `GET https://api.github.com/repos/eighttreasures/fan_pilot_mac/releases/latest`, 6-hour throttle; manual check via the "检查更新…" menu item
+- Release assets: `FanPilot-<version>.zip` containing `FanPilot.app`; version comes from `CFBundleShortVersionString`, and the release tag must be `v<version>` (e.g. `v1.0.0`)
+- Privileged helper: root LaunchDaemon `com.YANG-sty.FanPilot.helper`, accepting only clients signed `com.YANG-sty.FanPilot` from the current console user
+- Signature: ad-hoc (not notarized); first launch requires right-click → Open
+- Telemetry: one anonymous launch event to TelemetryDeck containing app version, OS version, architecture and a locally generated random UUID; no personal data, no rule or sensor data, no account, fire-and-forget
+- Donation window: manual click only, no automatic trigger or scheduling
+
+## Documentation
+
+- [README](README.md): full feature list, comparison table, install steps and FAQ
+
+## Optional
+
+- [Source repository (private)](https://github.com/YANG-sty/fan_pilot_mac): not publicly accessible
